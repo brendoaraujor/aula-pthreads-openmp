@@ -1,0 +1,212 @@
+\documentclass[10pt, compress]{beamer}
+
+\usetheme[numbering=fraction, progressbar=none, titleformat=smallcaps, sectionpage=none]{metropolis}
+
+\usepackage{sourcecodepro}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage[scale=2]{ccicons}
+\usepackage{url}
+\usepackage{relsize}
+\usepackage{wasysym}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+
+\definecolor{Base}{HTML}{191F26}
+\definecolor{Accent}{HTML}{157FFF}
+
+\setbeamercolor{alerted text}{fg=Accent}
+\setbeamercolor{frametitle}{bg=Base}
+
+\setsansfont[BoldFont={Source Sans Pro Semibold},
+              Numbers={OldStyle}]{Source Sans Pro}
+
+\lstset{ %
+  backgroundcolor={},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=true,
+  breaklines=true,
+  captionpos=n,
+  commentstyle=\color{orange},
+  escapeinside={\%*}{*)},
+  extendedchars=true,
+  frame=n,
+  keywordstyle=\color{Accent},
+  language=C++,
+  rulecolor=\color{black},
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  stepnumber=2,
+  stringstyle=\color{gray},
+  tabsize=2,
+  keywords={thrust,plus,device_vector, copy,transform,begin,end, copyin,
+  copyout, acc, \_\_global\_\_, void, int, float, main, threadIdx, blockIdx,
+  blockDim, if, else, malloc, NULL, cudaMalloc, cudaMemcpy, cudaSuccess,
+  cudaGetLastError, cudaDeviceSynchronize, cudaFree, cudaMemcpyDeviceToHost,
+  cudaMemcpyHostToDevice, const, data, independent, kernels, loop,
+  fprintf, stderr, cudaGetErrorString, EXIT_FAILURE, for, dim3, pthread_t,
+  pthread_create, exit, pthread_exit, long, printf},
+  otherkeywords={::, \#pragma, \#include, \#define, <<<,>>>, \&, \*, +, -, /, [, ], >, <}
+}
+
+\renewcommand*{\UrlFont}{\ttfamily\smaller\relax}
+
+\graphicspath{{../img/}}
+
+\title{POSIX Threads}
+\author{\footnotesize Pedro Bruel \\ {\scriptsize \emph{phrb@ime.usp.br}}}
+\institute{\includegraphics[height=2cm]{imelogo}\\[0.2cm] Instituto de Matemática e Estatística \\ Universidade de São Paulo}
+\date{\scriptsize \today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Introdução}
+
+\subsection*{Roteiro}
+
+\begin{frame}
+    \frametitle{Roteiro}
+    \setbeamertemplate{section in toc}[sections numbered]
+    \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}
+    \frametitle{Slides}
+    \begin{center}
+        \includegraphics[width=.18\textwidth]{github}
+    \end{center}
+    The slides and all source code are hosted at \alert{GitHub}:
+
+    \begin{itemize}
+        \item \url{github.com/phrb/---}
+    \end{itemize}
+\end{frame}
+
+\section{Processos \& Threads}
+
+\begin{frame}
+    \frametitle{Programação Concorrente}
+    \alert{Desempenho}:
+    \begin{itemize}
+        \item Arquiteturas paralelas
+        \item Memória Compartilhada
+        \item SMP, hyperthreaded, multi-core, NUMA, $\dots$
+    \end{itemize}
+
+    \alert{Modelagem}:
+    \begin{itemize}
+        \item Descrever paralelismo natural
+        \item Tarefas independentes
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Processos \& Threads}
+    Cada processo tem seu próprio espaço de endereçamento:
+        \begin{itemize}
+            \item segmento de texto: contém o código executável
+            \item segmento de dados: contém as variáveis globais
+            \item pilha: contém dados temporários, como variáveis locais
+        \end{itemize}
+
+    Contexto do processo:
+        \begin{itemize}
+            \item Conjunto mínimo de dados
+            \item Contador do programa
+            \item Registradores
+            \item Gravado quando o processo é interrompido
+            \item Relido quando é retomado
+        \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Processos \& Threads}
+    Permitem múltiplas atividades independentes dentro de um
+    único processo
+
+    Threads de um mesmo processo compartilham:
+
+    \begin{itemize}
+        \item Todo o espaço de endereçamento, exceto a pilha, os
+            registradores e o contador de programa
+        \item Arquivos abertos
+        \item Outros recursos
+    \end{itemize}
+
+    Também são chamados de processos leves, pois a criação das
+    threads e a troca de contexto são mais rápidas
+
+    Permitem um alto grau de cooperação entre as atividades
+\end{frame}
+
+\begin{frame}
+    \frametitle{IEEE POSIX Threads}
+    \begin{itemize}
+        \item Portable Operating System Interface (\alert{POSIX})
+        \item Norma internacional IEEE POSIX1 1003.1 C
+        \item Apenas a API é normalizada, não a ABI
+        \item Threads em nível de usuário, em nível de kernel ou misto
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Bibliotecas}
+    \begin{itemize}
+        \item LinuxThread (1996)
+        \item GNU Pth (1999)
+        \item NGPT (2002)
+        \item NPTL (2002)
+        \item PM2/Marcel (2011)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{POSIX Threads: Tutorial}
+    \alert{POSIX Threads Programming}:
+    \begin{itemize}
+        \item Blaise Barney, Lawrence Livermore National Laboratory	 
+        \item \url{https://computing.llnl.gov/tutorials/pthreads/}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{POSIX Threads: Hello, World!}
+    \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+    #include <pthread.h>
+    #include <stdio.h>
+    #include <stdlib.h>
+    #define NUM_THREADS 5
+    void *print_hello(void *threadid){
+        long tid;
+        tid = (long) threadid;
+        printf("Hello World! It's me, thread #%ld!\n", tid);
+        pthread_exit(NULL);
+    };
+    int main(int argc, char *argv[]){
+        pthread_t threads[NUM_THREADS];
+        int error_code;
+        long t;
+        for(t = 0; t < NUM_THREADS; t++){
+            printf("In main: creating thread %ld\n", t);
+            error_code = pthread_create(&threads[t], NULL,
+                                        print_hello, (void *) t);
+            if (error_code){
+                printf("ERROR pthread_create(): %d\n", error_code);
+                exit(-1);
+            };
+        };
+        pthread_exit(NULL);
+    };
+    \end{lstlisting}
+\end{frame}
+
+\maketitle
+
+\end{document}
