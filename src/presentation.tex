@@ -12,6 +12,7 @@
 \usepackage{url}
 \usepackage{relsize}
 \usepackage{wasysym}
+\usepackage{animate}
 
 \usepackage{pgfplots}
 \usepgfplotslibrary{dateplot}
@@ -85,14 +86,14 @@
     The slides and all source code are hosted at \alert{GitHub}:
 
     \begin{itemize}
-        \item \url{github.com/phrb/---}
+        \item \url{github.com/phrb/aula-pthreads}
     \end{itemize}
 \end{frame}
 
-\section{Processos \& Threads}
+\section{Motivação}
 
 \begin{frame}
-    \frametitle{Programação Concorrente}
+    \frametitle{Programação Concorrente: Motivação}
     \alert{Desempenho}:
     \begin{itemize}
         \item Arquiteturas paralelas
@@ -108,15 +109,31 @@
 \end{frame}
 
 \begin{frame}
+    \frametitle{Programação Concorrente: Motivação}
+    \begin{center}
+        \includegraphics[width=.55\textwidth]{shared_work}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Programação Concorrente: Motivação}
+    \begin{center}
+        \animategraphics[loop,autoplay,width=\linewidth]{12}{puppies/puppies-}{0}{68}
+    \end{center}
+\end{frame}
+
+\section{Processos \& Threads}
+
+\begin{frame}
     \frametitle{Processos \& Threads}
-    Cada processo tem seu próprio espaço de endereçamento:
+    Cada \alert{processo} tem seu próprio \alert{espaço de endereçamento}:
         \begin{itemize}
-            \item segmento de texto: contém o código executável
-            \item segmento de dados: contém as variáveis globais
-            \item pilha: contém dados temporários, como variáveis locais
+            \item \alert{Segmento de texto}: código executável
+            \item \alert{Segmento de dados}: variáveis globais
+            \item \alert{Pilha}: dados temporários
         \end{itemize}
 
-    Contexto do processo:
+    \alert{Contexto} do processo:
         \begin{itemize}
             \item Conjunto mínimo de dados
             \item Contador do programa
@@ -128,22 +145,14 @@
 
 \begin{frame}
     \frametitle{Processos \& Threads}
-    Permitem múltiplas atividades independentes dentro de um
-    único processo
-
-    Threads de um mesmo processo compartilham:
+    \alert{Threads} de um mesmo processo \alert{compartilham}:
 
     \begin{itemize}
-        \item Todo o espaço de endereçamento, exceto a pilha, os
+        \item \alert{Espaço de endereçamento}, exceto a pilha, os
             registradores e o contador de programa
         \item Arquivos abertos
-        \item Outros recursos
+        \item $\dots$
     \end{itemize}
-
-    Também são chamados de processos leves, pois a criação das
-    threads e a troca de contexto são mais rápidas
-
-    Permitem um alto grau de cooperação entre as atividades
 \end{frame}
 
 \begin{frame}
@@ -167,11 +176,13 @@
     \end{itemize}
 \end{frame}
 
+\section{Exemplos}
+
 \begin{frame}
     \frametitle{POSIX Threads: Tutorial}
     \alert{POSIX Threads Programming}:
     \begin{itemize}
-        \item Blaise Barney, Lawrence Livermore National Laboratory	 
+        \item Blaise Barney, Lawrence Livermore National Laboratory
         \item \url{https://computing.llnl.gov/tutorials/pthreads/}
     \end{itemize}
 \end{frame}
@@ -205,6 +216,17 @@
         pthread_exit(NULL);
     };
     \end{lstlisting}
+\end{frame}
+
+\begin{frame}
+    \frametitle{POSIX Threads: Mais Exemplos}
+    Exemplos em \url{https://github.com/phrb/aula-pthreads}:
+    \begin{itemize}
+        \item Hello, World!
+        \item Argumentos
+        \item \textit{Join}
+        \item Servidor IRC: \url{https://github.com/phrb/simple-irc-server}
+    \end{itemize}
 \end{frame}
 
 \maketitle
