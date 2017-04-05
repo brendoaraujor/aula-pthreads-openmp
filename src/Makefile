@@ -1,7 +1,7 @@
 TEMP_DIR = .temptex
 
-SRC = presentation.tex
-PDF = presentation.pdf
+SRC = pthreads-openmp.tex
+PDF = pthreads-openmp.pdf
 DTX = $(wildcard *.dtx)
 STY = $(patsubst %.dtx,%.sty,$(wildcard beamer*.dtx pgfplotsthemetol.dtx))
 
