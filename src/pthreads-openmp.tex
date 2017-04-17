@@ -52,7 +52,7 @@
   cudaMemcpyHostToDevice, const, data, independent, kernels, loop,
   fprintf, stderr, cudaGetErrorString, EXIT_FAILURE, for, dim3, pthread_t,
   pthread_create, exit, pthread_exit, long, printf, omp, parallel, private,
-  default, shared,
+  default, shared, task, taskgroup, taskloop, num_tasks,
   omp_get_thread_num, omp_get_num_threads},
   otherkeywords={::, \#pragma, \#include, \#define, <<<,>>>, \&, \*, +, -, /, [, ], >, <}
 }
@@ -97,7 +97,7 @@
     \begin{center}
         \includegraphics[width=.18\textwidth]{github}
     \end{center}
-    The slides and all source code are hosted at \alert{GitHub}:
+    Os slides e todo o código fonte estão no \alert{GitHub}:
 
     \begin{itemize}
         \item \url{github.com/phrb/aula-pthreads-openmp}
@@ -258,6 +258,26 @@
 
 \section{OpenMP}
 
+\maketitle
+
+\begin{frame}
+    \frametitle{Roteiro}
+    \setbeamertemplate{section in toc}[sections numbered]
+    \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}
+    \frametitle{Slides}
+    \begin{center}
+        \includegraphics[width=.18\textwidth]{github}
+    \end{center}
+    Os slides e todo o código fonte estão no \alert{GitHub}:
+
+    \begin{itemize}
+        \item \url{github.com/phrb/aula-pthreads-openmp}
+    \end{itemize}
+\end{frame}
+
 \begin{frame}
     \frametitle{OpenMP}
     \alert{Open Multi-Processing} (OpenMP):
@@ -402,6 +422,60 @@
         \item Reduction
         \item Critical section
     \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{OpenMP 4.5}
+    Versão \alert{4.5} da \alert{API OpenMP}:
+    \begin{itemize}
+        \item Lançada em \alert{Novembro de 2015}
+        \item OpenMP \alert{Architecture Review Board} (ARB)
+        \item Requer \alert{GCC 6}:
+            \begin{itemize}
+                \item Xeon Phi
+                \item Algumas GPGPUs AMD
+                \item GPGPUs Nvidia no futuro
+            \end{itemize}
+        \item \alert{Especificação completa} da API no repositório
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{OpenMP 4.5: Exemplo com \texttt{taskloop}}
+    \alert{Dividir e sincronizar} $1024$ iterações de um laço entre $32$
+    \textit{threads}, usando \alert{OpenMP $<$ 4.5}:
+
+    \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+    #pragma omp taskgroup
+    {
+        for(int tmp = 0; tmp < 32; tmp++){
+            #pragma omp task
+            for(long l = tmp * 32; l < tmp * 32 + 32; l++){
+                do_something (l);
+            };
+        };
+    };
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{OpenMP 4.5: Exemplo com \texttt{taskloop}}
+    \alert{Dividir e sincronizar} $1024$ iterações de um laço entre $32$
+    \textit{threads}, usando \alert{OpenMP $\geq$ 4.5}:
+
+    \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+    #pragma omp taskloop num_tasks(32)
+    for (long l = 0; l < 1024; l++){
+        do_something(l);
+    };
+    \end{lstlisting}
+
+    \pause
+
+    Para saber mais, no \alert{blog da RedHat}:
+    \begin{center}
+        \scriptsize{\url{https://developers.redhat.com/blog/2016/03/22/what-is-new-in-openmp-4-5-3/}}
+    \end{center}
 \end{frame}
 
 \maketitle
